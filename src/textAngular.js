@@ -2251,16 +2251,7 @@ textAngular.directive("textAngular", [
 								ngModel.$setViewValue(_originalContents);
 							}
 							$timeout(function () {
-								angular.forEach(angular.element('#taTextElement' + _serial).find('aq-parameterized-picker'), function (picker, index) {
-									var uniqueId = angular.element(picker).attr('id');
-									var selectedValue = angular.element(picker).attr('selected-value');
-									scope['picker_' + uniqueId] = {'selected': selectedValue};
-									scope.refreshTextElement = function () {
-						                editorScope.updateBindtaTextElement();
-						            };
-						            scope.parameterizedValues = scope.$parent.question.parameterizedValues;
-									$compile(picker)(scope);
-								});
+								scope.$emit('aqTaFirstRun', _serial);
 							}, 0);
 						}
 						scope.displayElements.forminput.val(ngModel.$viewValue);
