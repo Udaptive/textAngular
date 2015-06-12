@@ -1005,7 +1005,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 			if (_blankVal.length === 0 || _blankVal === _defaultTest || /^>(\s|&nbsp;)*<\/[^>]+>$/ig.test(_blankVal)) return true;
 			// this regex tests if there is a tag followed by some optional whitespace and some text after that
 			else if (/>\s*[^\s<]/i.test(_blankVal) || INLINETAGS_NONBLANK.test(_blankVal)) return false;
-			else return true;
+			else return false; //changed by Ted @ acrobatiq to correctly hide placeholders
 		};
 	};
 }])
@@ -2145,6 +2145,10 @@ textAngular.directive("textAngular", [
 
 				scope.updateTaBindtaTextElement = scope['updateTaBindtaTextElement' + _serial];
 				scope.updateTaBindtaHtmlElement = scope['updateTaBindtaHtmlElement' + _serial];
+
+				scope.$on('updateTaBindtaTextElement', function (event) {
+					scope.updateTaBindtaTextElement();
+				});
 
 				// add the classes manually last
 				element.addClass("ta-root");
