@@ -2256,9 +2256,6 @@ textAngular.directive("textAngular", [
 								// on passing through to taBind it will be sanitised
 								ngModel.$setViewValue(_originalContents);
 							}
-							$timeout(function () {
-								scope.$emit('aqTaFirstRun', _serial);
-							}, 0);
 						}
 						scope.displayElements.forminput.val(ngModel.$viewValue);
 						// if the editors aren't focused they need to be updated, otherwise they are doing the updating
@@ -2267,6 +2264,9 @@ textAngular.directive("textAngular", [
 							// catch model being null or undefined
 							scope.html = ngModel.$viewValue || '';
 						}
+						$timeout(function () {
+							scope.$emit('aqTaFirstRun', element);
+						}, 0);
 					};
 					// trigger the validation calls
 					var _validity = function(value){
