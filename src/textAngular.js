@@ -413,14 +413,13 @@ angular.module('textAngular.factories', [])
 		var deferred = $q.defer(),
 			promise = deferred.promise,
 			_editor = this.$editor();
+		promise['finally'](function(){
+			_editor.endAction.call(_editor);
+		});
 		// pass into the action the deferred function and also the function to reload the current selection if rangy available
 		var result;
 		try{
 			result = this.action(deferred, _editor.startAction());
-			// We set the .finally callback here to make sure it doesn't get executed before any other .then callback.
-			promise['finally'](function(){
-				_editor.endAction.call(_editor);
-			});
 		}catch(exc){
 			$log.error(exc);
 		}
@@ -1006,7 +1005,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 			if (_blankVal.length === 0 || _blankVal === _defaultTest || /^>(\s|&nbsp;)*<\/[^>]+>$/ig.test(_blankVal)) return true;
 			// this regex tests if there is a tag followed by some optional whitespace and some text after that
 			else if (/>\s*[^\s<]/i.test(_blankVal) || INLINETAGS_NONBLANK.test(_blankVal)) return false;
-			else return true;
+			else return false; //changed by Ted @ acrobatiq to correctly hide placeholders
 		};
 	};
 }])
@@ -1880,7 +1879,7 @@ textAngular.directive("textAngular", [
 					_originalContents, _toolbars,
 					_serial = (attrs.serial) ? attrs.serial : Math.floor(Math.random() * 10000000000000000),
 					_taExecCommand, _resizeMouseDown, _updateSelectedStylesTimeout;
-				
+
 				scope._name = (attrs.name) ? attrs.name : 'textAngularEditor' + _serial;
 
 				var oneEvent = function(_element, event, action){
@@ -1926,6 +1925,9 @@ textAngular.directive("textAngular", [
 				// optional fileDropHandler function
 				if(attrs.taFileDrop)				scope.fileDropHandler = scope.$parent.$eval(attrs.taFileDrop);
 				else								scope.fileDropHandler = scope.defaultFileDropHandler;
+				// used for handling drops of things other than a file
+				if(attrs.taOthersDrop)				scope.othersDropHandler = scope.$parent.$eval(attrs.taOthersDrop);
+				else								scope.othersDropHandler = null;
 
 				_originalContents = element[0].innerHTML;
 				// clear the original content
@@ -2038,7 +2040,7 @@ textAngular.directive("textAngular", [
 								x: Math.max(0, startPosition.width + (event.clientX - startPosition.x)),
 								y: Math.max(0, startPosition.height + (event.clientY - startPosition.y))
 							};
-							
+
 							if(event.shiftKey){
 								// keep ratio
 								var newRatio = pos.y / pos.x;
@@ -2048,7 +2050,7 @@ textAngular.directive("textAngular", [
 							el = angular.element(_el);
 							el.attr('height', Math.max(0, pos.y));
 							el.attr('width', Math.max(0, pos.x));
-							
+
 							// reflow the popover tooltip
 							scope.reflowResizeOverlay(_el);
 						};
@@ -2091,12 +2093,12 @@ textAngular.directive("textAngular", [
 				});
 				scope.displayElements.scrollWindow.attr({'ng-hide': 'showHtml'});
 				if(attrs.taDefaultWrap) scope.displayElements.text.attr('ta-default-wrap', attrs.taDefaultWrap);
-				
+
 				if(attrs.taUnsafeSanitizer){
 					scope.displayElements.text.attr('ta-unsafe-sanitizer', attrs.taUnsafeSanitizer);
 					scope.displayElements.html.attr('ta-unsafe-sanitizer', attrs.taUnsafeSanitizer);
 				}
-				
+
 				// add the main elements to the origional element
 				scope.displayElements.scrollWindow.append(scope.displayElements.text);
 				element.append(scope.displayElements.scrollWindow);
@@ -2129,20 +2131,24 @@ textAngular.directive("textAngular", [
 						}
 					});
 				}
-				
+
 				if(attrs.taPaste){
 					scope._pasteHandler = function(_html){
 						return $parse(attrs.taPaste)(scope.$parent, {$html: _html});
 					};
 					scope.displayElements.text.attr('ta-paste', '_pasteHandler($html)');
 				}
-				
+
 				// compile the scope with the text and html elements only - if we do this with the main element it causes a compile loop
 				$compile(scope.displayElements.scrollWindow)(scope);
 				$compile(scope.displayElements.html)(scope);
 
 				scope.updateTaBindtaTextElement = scope['updateTaBindtaTextElement' + _serial];
 				scope.updateTaBindtaHtmlElement = scope['updateTaBindtaHtmlElement' + _serial];
+
+				scope.$on('updateTaBindtaTextElement', function (event) {
+					scope.updateTaBindtaTextElement();
+				});
 
 				// add the classes manually last
 				element.addClass("ta-root");
@@ -2196,11 +2202,11 @@ textAngular.directive("textAngular", [
 				};
 				scope.displayElements.html.on('blur', _focusout);
 				scope.displayElements.text.on('blur', _focusout);
-				
+
 				scope.displayElements.text.on('paste', function(event){
 					element.triggerHandler('paste', event);
 				});
-				
+
 				// Setup the default toolbar tools, this way allows the user to add new tools like plugins.
 				// This is on the editor for future proofing if we find a better way to do this.
 				scope.queryFormatBlockState = function(command){
@@ -2258,6 +2264,9 @@ textAngular.directive("textAngular", [
 							// catch model being null or undefined
 							scope.html = ngModel.$viewValue || '';
 						}
+						$timeout(function () {
+							scope.$emit('aqTaFirstRun', element);
+						}, 0);
 					};
 					// trigger the validation calls
 					var _validity = function(value){
@@ -2328,6 +2337,10 @@ textAngular.directive("textAngular", [
 						dropEvent.stopPropagation();
 					/* istanbul ignore else, the updates if moved text */
 					}else{
+						// if there is a custome handler for these then call it
+						if (scope.othersDropHandler){
+							scope.othersDropHandler(event, element, dataTransfer, scope.wrapSelection);
+						}
 						$timeout(function(){
 							scope['updateTaBindtaTextElement' + _serial]();
 						}, 0);
@@ -2543,7 +2556,7 @@ textAngular.service('textAngularManager', ['taToolExecuteAction', 'taTools', 'ta
 										break;
 									}
 								}
-								if(result) break; 
+								if(result) break;
 							}
 						}
 						return result;
@@ -2705,10 +2718,10 @@ textAngular.directive('textAngularToolbar', [
 						toolElement = angular.element(toolDefinition.display);
 					}
 					else toolElement = angular.element("<button type='button'>");
-					
+
 					if(toolDefinition && toolDefinition["class"]) toolElement.addClass(toolDefinition["class"]);
 					else toolElement.addClass(scope.classes.toolbarButton);
-					
+
 					toolElement.attr('name', toolScope.name);
 					// important to not take focus from the main text/html entry
 					toolElement.attr('unselectable', 'on');
@@ -2855,4 +2868,5 @@ textAngular.directive('textAngularToolbar', [
 			}
 		};
 	}
-]);})();
+]);
+})();
