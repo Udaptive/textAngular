@@ -1860,7 +1860,9 @@ textAngular.directive("textAngular", [
 		textAngularManager, $window, $document, $animate, $log, $q, $parse){
 		return {
 			require: '?ngModel',
-			scope: {},
+			scope: {
+	        	parentObject: '=?',
+	      	},
 			restrict: "EA",
 			link: function(scope, element, attrs, ngModel){
 				// all these vars should not be accessable outside this directive
