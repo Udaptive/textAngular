@@ -8,7 +8,7 @@ See README.md or https://github.com/fraywing/textAngular/wiki for requirements a
 */
 
 (function(){ // encapsulate all variables so they don't become global vars
-"use strict";					
+"use strict";
 // IE version detection - http://stackoverflow.com/questions/4169160/javascript-ie-detection-why-not-use-simple-conditional-comments
 // We need this as IE sometimes plays funny tricks with the contenteditable.
 // ----------------------------------------------------------
@@ -30,12 +30,12 @@ var _browserDetect = {
 			v = 3,
 			div = document.createElement('div'),
 			all = div.getElementsByTagName('i');
-		
+
 		while (
 			div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
 			all[0]
 		);
-		
+
 		return v > 4 ? v : undef;
 	}()),
 	webkit: /AppleWebKit\/([\d.]+)/i.test(navigator.userAgent)
@@ -63,7 +63,7 @@ if(_browserDetect.webkit) {
 					curelement.select(); // use select to place cursor for input elements.
 				}
 			}
-		}	
+		}
 		globalContentEditableBlur = false;
 	}, false); // add global click handler
 	angular.element(document).ready(function () {
@@ -140,7 +140,7 @@ if(_browserDetect.ie > 8 || _browserDetect.ie === undefined){
 		/* istanbul ignore next: browser catches */
 		if(_sheet.cssRules) insertIndex = Math.max(_sheet.cssRules.length - 1, 0);
 		else if(_sheet.rules) insertIndex = Math.max(_sheet.rules.length - 1, 0);
-		
+
 		/* istanbul ignore else: untestable IE option */
 		if(_sheet.insertRule) {
 			_sheet.insertRule(selector + "{" + rules + "}", insertIndex);
@@ -257,7 +257,7 @@ angular.module('textAngular.factories', [])
 			tag: 'i'
 		}
 	];
-	
+
 	var styleMatch = [];
 	for(var i = 0; i < convert_infos.length; i++){
 		var _partialStyle = '(' + convert_infos[i].property + ':\\s*(';
@@ -270,7 +270,7 @@ angular.module('textAngular.factories', [])
 		styleMatch.push(_partialStyle);
 	}
 	var styleRegexString = '(' + styleMatch.join('|') + ')';
-	
+
 	function wrapNested(html, wrapTag) {
 		var depth = 0;
 		var lastIndex = 0;
@@ -289,7 +289,7 @@ angular.module('textAngular.factories', [])
 			angular.element(wrapTag)[0].outerHTML.substring(wrapTag.length) +
 			html.substring(lastIndex);
 	}
-	
+
 	function transformLegacyStyles(html){
 		if(!html || !angular.isString(html) || html.length <= 0) return html;
 		var i;
@@ -337,7 +337,7 @@ angular.module('textAngular.factories', [])
 		else finalHtml += html.substring(lastIndex);
 		return finalHtml;
 	}
-	
+
 	function transformLegacyAttributes(html){
 		if(!html || !angular.isString(html) || html.length <= 0) return html;
 		// replace all align='...' tags with text-align attributes
@@ -366,7 +366,7 @@ angular.module('textAngular.factories', [])
 		// return with remaining html
 		return finalHtml + html.substring(lastIndex);
 	}
-	
+
 	return function taSanitize(unsafe, oldsafe, ignore){
 		// unsafe html should NEVER built into a DOM object via angular.element. This allows XSS to be inserted and run.
 		if ( !ignore ) {
@@ -380,7 +380,7 @@ angular.module('textAngular.factories', [])
 		// any exceptions (lets say, color for example) should be made here but with great care
 		// setup unsafe element for modification
 		unsafe = transformLegacyAttributes(unsafe);
-		
+
 		var safe;
 		try {
 			safe = $sanitize(unsafe);
@@ -389,9 +389,9 @@ angular.module('textAngular.factories', [])
 		} catch (e){
 			safe = oldsafe || '';
 		}
-		
+
 		// Do processing for <pre> tags, removing tabs and return carriages outside of them
-		
+
 		var _preTags = safe.match(/(<pre[^>]*>.*?<\/pre[^>]*>)/ig);
 		var processedSafe = safe.replace(/(&#(9|10);)*/ig, '');
 		var re = /<pre[^>]*>.*?<\/pre[^>]*>/ig;
@@ -711,39 +711,39 @@ function($window, $document, taDOM){
 		},
 		setSelection: function(el, start, end){
 			var range = rangy.createRange();
-			
+
 			range.setStart(el, start);
 			range.setEnd(el, end);
-			
+
 			rangy.getSelection().setSingleRange(range);
 		},
 		setSelectionBeforeElement: function (el){
 			var range = rangy.createRange();
-			
+
 			range.selectNode(el);
 			range.collapse(true);
-			
+
 			rangy.getSelection().setSingleRange(range);
 		},
 		setSelectionAfterElement: function (el){
 			var range = rangy.createRange();
-			
+
 			range.selectNode(el);
 			range.collapse(false);
-			
+
 			rangy.getSelection().setSingleRange(range);
 		},
 		setSelectionToElementStart: function (el){
 			var range = rangy.createRange();
-			
+
 			range.selectNodeContents(el);
 			range.collapse(true);
-			
+
 			rangy.getSelection().setSingleRange(range);
 		},
 		setSelectionToElementEnd: function (el){
 			var range = rangy.createRange();
-			
+
 			range.selectNodeContents(el);
 			range.collapse(false);
 			if(el.childNodes && el.childNodes[el.childNodes.length - 1] && el.childNodes[el.childNodes.length - 1].nodeName === 'br'){
@@ -760,7 +760,7 @@ function($window, $document, taDOM){
 			var frag = _document.createDocumentFragment();
 			var children = element[0].childNodes;
 			var isInline = true;
-			
+
 			if(children.length > 0){
 				// NOTE!! We need to do the following:
 				// check for blockelements - if they exist then we have to split the current element in half (and all others up to the closest block element) and insert all children in-between.
@@ -782,7 +782,7 @@ function($window, $document, taDOM){
 				// paste text of some sort
 				lastNode = frag = _document.createTextNode(html);
 			}
-			
+
 			// Other Edge case - selected data spans multiple blocks.
 			if(isInline){
 				range.deleteContents();
@@ -807,7 +807,7 @@ function($window, $document, taDOM){
 							secondParent = parent.cloneNode();
 							// split the nodes into two lists - before and after, splitting the node with the selection into 2 text nodes.
 							taDOM.splitNodes(parent.childNodes, parent, secondParent, range.startContainer, range.startOffset);
-							
+
 							// Escape out of the inline tags like b
 							while(!VALIDELEMENTS.test(parent.nodeName)){
 								angular.element(parent).after(secondParent);
@@ -822,12 +822,12 @@ function($window, $document, taDOM){
 							secondParent = parent.cloneNode();
 							taDOM.splitNodes(parent.childNodes, parent, secondParent, undefined, undefined, range.startOffset);
 						}
-						
+
 						angular.element(parent).after(secondParent);
 						// put cursor to end of inserted content
 						range.setStartAfter(parent);
 						range.setEndAfter(parent);
-						
+
 						if(/^(|<br(|\/)>)$/i.test(parent.innerHTML.trim())){
 							range.setStartBefore(parent);
 							range.setEndBefore(parent);
@@ -853,7 +853,7 @@ function($window, $document, taDOM){
 					range.deleteContents();
 				}
 			}
-			
+
 			range.insertNode(frag);
 			if(lastNode){
 				api.setSelectionToElementEnd(lastNode);
@@ -875,35 +875,35 @@ function($window, $document, taDOM){
 			if(element.attr(attribute) !== undefined) resultingElements.push(element);
 			return resultingElements;
 		},
-		
+
 		transferChildNodes: function(source, target){
 			// clear out target
 			target.innerHTML = '';
 			while(source.childNodes.length > 0) target.appendChild(source.childNodes[0]);
 			return target;
 		},
-		
+
 		splitNodes: function(nodes, target1, target2, splitNode, subSplitIndex, splitIndex){
 			if(!splitNode && isNaN(splitIndex)) throw new Error('taDOM.splitNodes requires a splitNode or splitIndex');
 			var startNodes = document.createDocumentFragment();
 			var endNodes = document.createDocumentFragment();
 			var index = 0;
-			
+
 			while(nodes.length > 0 && (isNaN(splitIndex) || splitIndex !== index) && nodes[0] !== splitNode){
 				startNodes.appendChild(nodes[0]); // this removes from the nodes array (if proper childNodes object.
 				index++;
 			}
-			
+
 			if(!isNaN(subSplitIndex) && subSplitIndex >= 0 && nodes[0]){
 				startNodes.appendChild(document.createTextNode(nodes[0].nodeValue.substring(0, subSplitIndex)));
 				nodes[0].nodeValue = nodes[0].nodeValue.substring(subSplitIndex);
 			}
 			while(nodes.length > 0) endNodes.appendChild(nodes[0]);
-			
+
 			taDOM.transferChildNodes(startNodes, target1);
 			taDOM.transferChildNodes(endNodes, target2);
 		},
-		
+
 		transferNodeAttributes: function(source, target){
 			for(var i = 0; i < source.attributes.length; i++) target.setAttribute(source.attributes[i].name, source.attributes[i].value);
 			return target;
@@ -1005,16 +1005,16 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 			if (_blankVal.length === 0 || _blankVal === _defaultTest || /^>(\s|&nbsp;)*<\/[^>]+>$/ig.test(_blankVal)) return true;
 			// this regex tests if there is a tag followed by some optional whitespace and some text after that
 			else if (/>\s*[^\s<]/i.test(_blankVal) || INLINETAGS_NONBLANK.test(_blankVal)) return false;
-			else return true;
+			else return false; //changed by Ted @ acrobatiq to correctly hide placeholders
 		};
 	};
 }])
 .directive('taBind', [
-		'taSanitize', '$compile', '$timeout', '$window', '$document', 'taFixChrome', 'taBrowserTag',
+		'taSanitize', '$timeout', '$window', '$document', 'taFixChrome', 'taBrowserTag',
 		'taSelection', 'taSelectableElements', 'taApplyCustomRenderers', 'taOptions',
 		'_taBlankTest', '$parse', 'taDOM',
 		function(
-			taSanitize, $compile, $timeout, $window, $document, taFixChrome, taBrowserTag,
+			taSanitize, $timeout, $window, $document, taFixChrome, taBrowserTag,
 			taSelection, taSelectableElements, taApplyCustomRenderers, taOptions,
 			_taBlankTest, $parse, taDOM){
 	// Uses for this are textarea or input with ng-model and ta-bind='text'
@@ -1059,22 +1059,33 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 			var _blankTest = _taBlankTest(_defaultTest);
 
 			var _ensureContentWrapped = function(value){
-				var originalElement, originalChildren, mustWrap = false;
-				if (value === "") mustWrap = true;
-				try{
-					originalElement = angular.element(value);
-					originalChildren = originalElement.length;
-				}
-				catch(e){
-					// not an element
-					originalChildren = 0;
-					mustWrap = true;
-
-				}
+				if(_blankTest(value)) return value;
 				var domTest = angular.element("<div>" + value + "</div>");
-				// the text could be like "asdf<p>asdf</p>"
-				if(mustWrap || domTest.children().length - originalChildren === 0){
+				if(domTest.children().length === 0){
 					value = "<" + attrs.taDefaultWrap + ">" + value + "</" + attrs.taDefaultWrap + ">";
+				}else{
+					var _children = domTest[0].childNodes;
+					var i;
+					var _foundBlockElement = false;
+					for(i = 0; i < _children.length; i++){
+						if(_foundBlockElement = _children[i].nodeName.toLowerCase().match(BLOCKELEMENTS)) break;
+					}
+					if(!_foundBlockElement){
+						value = "<" + attrs.taDefaultWrap + ">" + value + "</" + attrs.taDefaultWrap + ">";
+					}else{
+						value = "";
+						for(i = 0; i < _children.length; i++){
+							if(!_children[i].nodeName.toLowerCase().match(BLOCKELEMENTS)){
+								var _subVal = (_children[i].outerHTML || _children[i].nodeValue);
+								/* istanbul ignore else: Doesn't seem to trigger on tests, is tested though */
+								if(_subVal.trim() !== '')
+									value += "<" + attrs.taDefaultWrap + ">" + _subVal + "</" + attrs.taDefaultWrap + ">";
+								else value += _subVal;
+							}else{
+								value += _children[i].outerHTML;
+							}
+						}
+					}
 				}
 				return value;
 			};
@@ -1176,6 +1187,29 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 				if(!_isReadonly) _setViewValue();
 			};
 
+			// catch DOM XSS via taSanitize
+			// Sanitizing both ways is identical
+			var _sanitize = function(unsafe){
+				return (ngModel.$oldViewValue = taSanitize(taFixChrome(unsafe), ngModel.$oldViewValue, _disableSanitizer));
+			};
+
+			// trigger the validation calls
+			var _validity = function(value){
+				if(attrs.required) ngModel.$setValidity('required', !_blankTest(value));
+				return value;
+			};
+			// parsers trigger from the above keyup function or any other time that the viewValue is updated and parses it for storage in the ngModel
+			ngModel.$parsers.push(_sanitize);
+			ngModel.$parsers.unshift(_ensureContentWrapped);
+			ngModel.$parsers.unshift(_validity);
+			// because textAngular is bi-directional (which is awesome) we need to also sanitize values going in from the server
+			ngModel.$formatters.push(_sanitize);
+			ngModel.$formatters.unshift(_ensureContentWrapped);
+			ngModel.$formatters.unshift(_validity);
+			ngModel.$formatters.unshift(function(value){
+				return ngModel.$undoManager.push(value || '');
+			});
+
 			//this code is used to update the models when data is entered/deleted
 			if(_isInputFriendly){
 				scope.events = {};
@@ -1239,7 +1273,6 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 						_html += '\n' + _repeat('\t', tablevel-1) + listNode.outerHTML.substring(listNode.outerHTML.lastIndexOf('<'));
 						return _html;
 					};
-					ngModel.$formatters.unshift(_ensureContentWrapped);
 					ngModel.$formatters.unshift(function(htmlValue){
 						// tabulate the HTML so it looks nicer
 						var _children = angular.element('<div>' + htmlValue + '</div>')[0].childNodes;
@@ -1384,6 +1417,10 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 							}
 
 							text = taSanitize(text, '', _disableSanitizer);
+							if (/<li(\s.*)?>/i.test(text) && /(<ul(\s.*)?>|<ol(\s.*)?>).*<li(\s.*)?>/i.test(text) === false) {
+								// insert missing parent of li element
+								text = text.replace(/<li(\s.*)?>.*<\/li(\s.*)?>/i, '<ul>$&</ul>');
+							}
 
 							if(_pasteHandler) text = _pasteHandler(scope, {$html: text}) || text;
 
@@ -1456,7 +1493,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 						if(eventData) angular.extend(event, eventData);
 						/* istanbul ignore else: readonly check */
 						if(!_isReadonly){
-							if(!event.altKey && event.metaKey || event.ctrlKey){
+							if(!event.altKey && (event.metaKey || event.ctrlKey)){
 								// covers ctrl/command + z
 								if((event.keyCode === 90 && !event.shiftKey)){
 									_undo();
@@ -1577,29 +1614,6 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 				}
 			}
 
-			// catch DOM XSS via taSanitize
-			// Sanitizing both ways is identical
-			var _sanitize = function(unsafe){
-				return (ngModel.$oldViewValue = taSanitize(taFixChrome(unsafe), ngModel.$oldViewValue, _disableSanitizer));
-			};
-
-			// trigger the validation calls
-			var _validity = function(value){
-				if(attrs.required) ngModel.$setValidity('required', !_blankTest(value));
-				return value;
-			};
-			// parsers trigger from the above keyup function or any other time that the viewValue is updated and parses it for storage in the ngModel
-			ngModel.$parsers.push(_sanitize);
-			ngModel.$parsers.push(_ensureContentWrapped);
-			ngModel.$parsers.unshift(_validity);
-			// because textAngular is bi-directional (which is awesome) we need to also sanitize values going in from the server
-			ngModel.$formatters.push(_sanitize);
-			ngModel.$formatters.unshift(_ensureContentWrapped);
-			ngModel.$formatters.unshift(_validity);
-			ngModel.$formatters.unshift(function(value){
-				return ngModel.$undoManager.push(value || '');
-			});
-
 			var selectorClickHandler = function(event){
 				// emit the element-select event, pass the element
 				scope.$emit('ta-element-select', this);
@@ -1635,10 +1649,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 			};
 
 			var _setInnerHTML = function(newval){
-				// newval = _ensureContentWrapped(newval);
-				var val = $compile(newval)(scope.$parent);
-				element.empty();
-				element.append(val);
+				element[0].innerHTML = newval;
 			};
 
 			// changes to the model variable from outside the html/text inputs
@@ -1683,7 +1694,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 						_setInnerHTML(taApplyCustomRenderers(val));
 					}else{
 						// only for input and textarea inputs
-						element.append(val);
+						element.val(val);
 					}
 				}
 				if(_isContentEditable && attrs.placeholder){
@@ -1823,7 +1834,7 @@ var taTools = {};
 */
 // name and toolDefinition to add into the tools available to be added on the toolbar
 function registerTextAngularTool(name, toolDefinition){
-	if(!name || name === '' || taTools.hasOwnProperty(name)) throw('textAngular Error: A unique name is required for a Tool Definition');
+	if(!name || name === '' || taTools.hasOwnProperty(name)) throw('textAngular Error: A unique name is required for a Tool Definition', name);
 	if(
 		(toolDefinition.display && (toolDefinition.display === '' || !validElementString(toolDefinition.display))) ||
 		(!toolDefinition.display && !toolDefinition.buttontext && !toolDefinition.iconclass)
@@ -1861,8 +1872,8 @@ textAngular.directive("textAngular", [
 		return {
 			require: '?ngModel',
 			scope: {
-	        	parentObject: '=?',
-	      	},
+        parentObject: '=?',
+      },
 			restrict: "EA",
 			link: function(scope, element, attrs, ngModel){
 				// all these vars should not be accessable outside this directive
@@ -2137,6 +2148,10 @@ textAngular.directive("textAngular", [
 				scope.updateTaBindtaTextElement = scope['updateTaBindtaTextElement' + _serial];
 				scope.updateTaBindtaHtmlElement = scope['updateTaBindtaHtmlElement' + _serial];
 
+				scope.$on('updateTaBindtaTextElement', function (event) {
+					scope.updateTaBindtaTextElement();
+				});
+
 				// add the classes manually last
 				element.addClass("ta-root");
 				scope.displayElements.scrollWindow.addClass("ta-text ta-editor " + scope.classes.textEditor);
@@ -2243,9 +2258,6 @@ textAngular.directive("textAngular", [
 								// on passing through to taBind it will be sanitised
 								ngModel.$setViewValue(_originalContents);
 							}
-							$timeout(function(){
-								scope.$emit('ta-first-run', element);
-							}, 0);
 						}
 						scope.displayElements.forminput.val(ngModel.$viewValue);
 						// if the editors aren't focused they need to be updated, otherwise they are doing the updating
@@ -2254,6 +2266,9 @@ textAngular.directive("textAngular", [
 							// catch model being null or undefined
 							scope.html = ngModel.$viewValue || '';
 						}
+						$timeout(function () {
+							scope.$emit('aqTaFirstRun', element);
+						}, 0);
 					};
 					// trigger the validation calls
 					var _validity = function(value){
