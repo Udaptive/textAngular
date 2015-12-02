@@ -206,7 +206,7 @@ var svgElements = makeMap("animate,animateColor,animateMotion,animateTransform,c
         "stop,svg,switch,text,title,tspan,use");
 
 // Special Elements (can contain anything)
-var specialElements = makeMap("script,style");
+var specialElements = makeMap("script,style,table,aq-input-ref,span,annotation");
 
 var validElements = angular.extend({},
                                    voidElements,
