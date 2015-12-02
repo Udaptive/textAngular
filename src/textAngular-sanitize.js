@@ -546,6 +546,11 @@ function validCustomTag(tag, attrs, lkey, value){
     if (tag === 'img' && attrs['ta-insert-video']){
         if(lkey === 'ta-insert-video' || lkey === 'allowfullscreen' || lkey === 'frameborder' || (lkey === 'contenteditable' && value === 'false')) return true;
     }
+    if (tag === 'img'){
+      if(lkey === 'image-id' || lkey === 'height' || lkey == 'width' || lkey === 'layout' || lkey === 'alt-src') {
+        return true;
+      }
+    }
     if (tag === 'a' && lkey === 'ta-smLink') {
       return true;
     }
