@@ -206,7 +206,9 @@ var svgElements = makeMap("animate,animateColor,animateMotion,animateTransform,c
         "stop,svg,switch,text,title,tspan,use");
 
 // Special Elements (can contain anything)
-var specialElements = makeMap("script,style,table,aq-input-ref,span,annotation");
+var specialElements = makeMap("script,style");
+
+var unsanitizedElements = makeMap("table,aq-input-ref,annotation,equation,aq-parameterized-picker,aq-input-ref,aq-inline-activity");
 
 var validElements = angular.extend({},
                                    voidElements,
@@ -497,52 +499,60 @@ var trim = (function() {
 // Currently allows only the color, background-color, text-align, float, width and height attributes
 // all other attributes should be easily done through classes.
 function validStyles(styleAttr){
-	var result = '';
-	var styleArray = styleAttr.split(';');
-	angular.forEach(styleArray, function(value){
-		var v = value.split(':');
-		if(v.length == 2){
-			var key = trim(angular.lowercase(v[0]));
-			var value = trim(angular.lowercase(v[1]));
-			if(
-				(key === 'color' || key === 'background-color') && (
-					value.match(/^rgb\([0-9%,\. ]*\)$/i)
-					|| value.match(/^rgba\([0-9%,\. ]*\)$/i)
-					|| value.match(/^hsl\([0-9%,\. ]*\)$/i)
-					|| value.match(/^hsla\([0-9%,\. ]*\)$/i)
-					|| value.match(/^#[0-9a-f]{3,6}$/i)
-					|| value.match(/^[a-z]*$/i)
-				)
-			||
-				key === 'text-align' && (
-					value === 'left'
-					|| value === 'right'
-					|| value === 'center'
-					|| value === 'justify'
-				)
-			||
-				key === 'float' && (
-					value === 'left'
-					|| value === 'right'
-					|| value === 'none'
-				)
-			||
-				(key === 'width' || key === 'height') && (
-					value.match(/[0-9\.]*(px|em|rem|%)/)
-				)
-			|| // Reference #520
-				(key === 'direction' && value.match(/^ltr|rtl|initial|inherit$/))
-			) result += key + ': ' + value + ';';
-		}
-	});
-	return result;
+  var result = '';
+  var styleArray = styleAttr.split(';');
+  angular.forEach(styleArray, function(value){
+    var v = value.split(':');
+    if(v.length == 2){
+      var key = trim(angular.lowercase(v[0]));
+      var value = trim(angular.lowercase(v[1]));
+      if(
+        (key === 'color' || key === 'background-color') && (
+          value.match(/^rgb\([0-9%,\. ]*\)$/i)
+          || value.match(/^rgba\([0-9%,\. ]*\)$/i)
+          || value.match(/^hsl\([0-9%,\. ]*\)$/i)
+          || value.match(/^hsla\([0-9%,\. ]*\)$/i)
+          || value.match(/^#[0-9a-f]{3,6}$/i)
+          || value.match(/^[a-z]*$/i)
+        )
+      ||
+        key === 'text-align' && (
+          value === 'left'
+          || value === 'right'
+          || value === 'center'
+          || value === 'justify'
+        )
+      ||
+        key === 'float' && (
+          value === 'left'
+          || value === 'right'
+          || value === 'none'
+        )
+      ||
+        (key === 'width' || key === 'height') && (
+          value.match(/[0-9\.]*(px|em|rem|%)/)
+        )
+      || // Reference #520
+        (key === 'direction' && value.match(/^ltr|rtl|initial|inherit$/))
+      ) result += key + ': ' + value + ';';
+    }
+  });
+  return result;
 }
 
 // this function is used to manually allow specific attributes on specific tags with certain prerequisites
 function validCustomTag(tag, attrs, lkey, value){
-	// catch the div placeholder for the iframe replacement
+  // catch the div placeholder for the iframe replacement
     if (tag === 'img' && attrs['ta-insert-video']){
         if(lkey === 'ta-insert-video' || lkey === 'allowfullscreen' || lkey === 'frameborder' || (lkey === 'contenteditable' && value === 'false')) return true;
+    }
+    if (tag === 'a' && lkey === 'ta-smLink') {
+      return true;
+    }
+    if (tag === 'span'){
+        if(lkey.startsWith('data-aq') || lkey === 'activityLink' || lkey === 'data-asset-id' || lkey === 'aq-tag-icon' || lkey === 'entry' || lkey === 'id' || lkey === 'comment') {
+          return true;
+        }
     }
     return false;
 }
@@ -573,7 +583,7 @@ function htmlSanitizeWriter(buf, uriValidator) {
           var lkey=angular.lowercase(key);
           var isImage=(tag === 'img' && lkey === 'src') || (lkey === 'background');
           if ((lkey === 'style' && (value = validStyles(value)) !== '') || validCustomTag(tag, attrs, lkey, value) || validAttrs[lkey] === true &&
-            (uriAttrs[lkey] !== true || uriValidator(value, isImage))) {
+            (uriAttrs[lkey] !== true || uriValidator(value, isImage)) || unsanitizedElements[tag] === true) {
             out(' ');
             out(key);
             out('="');
