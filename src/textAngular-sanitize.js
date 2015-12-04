@@ -555,7 +555,7 @@ function validCustomTag(tag, attrs, lkey, value){
       return true;
     }
     if (tag === 'span'){
-        if(lkey.startsWith('data-aq') || lkey === 'activityLink' || lkey === 'data-asset-id' || lkey === 'aq-tag-icon' || lkey === 'entry' || lkey === 'id' || lkey === 'comment' || lkey === 'term' || lkey === 'annotation') {
+        if(lkey.startsWith('data-aq') || lkey === 'activityLink' || lkey === 'data-asset-id' || lkey === 'aq-tag-icon' || lkey === 'entry' || lkey === 'id' || lkey === 'comment' || lkey === 'table' || lkey === 'table-html' || lkey === 'term') {
           return true;
         }
     }
