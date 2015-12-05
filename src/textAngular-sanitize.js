@@ -215,7 +215,8 @@ var validElements = angular.extend({},
                                    blockElements,
                                    inlineElements,
                                    optionalEndTagElements,
-                                   svgElements);
+                                   svgElements,
+                                   unsanitizedElements);
 
 //Attributes that have href and hence need to be sanitized
 var uriAttrs = makeMap("background,cite,href,longdesc,src,usemap,xlink:href");
