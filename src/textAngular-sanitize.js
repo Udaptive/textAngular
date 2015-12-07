@@ -508,15 +508,15 @@ function validStyles(styleAttr){
       var key = trim(angular.lowercase(v[0]));
       var value = trim(angular.lowercase(v[1]));
       if(
-        (key === 'color' || key === 'background-color') && (
-          value.match(/^rgb\([0-9%,\. ]*\)$/i)
-          || value.match(/^rgba\([0-9%,\. ]*\)$/i)
-          || value.match(/^hsl\([0-9%,\. ]*\)$/i)
-          || value.match(/^hsla\([0-9%,\. ]*\)$/i)
-          || value.match(/^#[0-9a-f]{3,6}$/i)
-          || value.match(/^[a-z]*$/i)
-        )
-      ||
+      //   (key === 'color' || key === 'background-color') && (
+      //     value.match(/^rgb\([0-9%,\. ]*\)$/i)
+      //     || value.match(/^rgba\([0-9%,\. ]*\)$/i)
+      //     || value.match(/^hsl\([0-9%,\. ]*\)$/i)
+      //     || value.match(/^hsla\([0-9%,\. ]*\)$/i)
+      //     || value.match(/^#[0-9a-f]{3,6}$/i)
+      //     || value.match(/^[a-z]*$/i)
+      //   )
+      // ||
         key === 'text-align' && (
           value === 'left'
           || value === 'right'
