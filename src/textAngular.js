@@ -1866,7 +1866,7 @@ textAngular.run([function(){
 
 textAngular.directive("textAngular", [
   '$compile', '$timeout', 'taOptions', 'taSelection', 'taExecCommand',
-  'textAngularManager', '$window', '$document', '$animate', '$log', '$q', '$parse',
+  'textAngularManager', '$window', '$document', '$animate', '$log', '$q', '$parse', 'taSanitize',
   function($compile, $timeout, taOptions, taSelection, taExecCommand,
     textAngularManager, $window, $document, $animate, $log, $q, $parse){
     return {
