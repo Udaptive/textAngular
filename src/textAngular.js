@@ -1866,16 +1866,16 @@ textAngular.run([function(){
 
 textAngular.directive("textAngular", [
   '$compile', '$timeout', 'taOptions', 'taSelection', 'taExecCommand',
-  'textAngularManager', '$window', '$document', '$animate', '$log', '$q', '$parse',
+  'textAngularManager', '$window', '$document', '$animate', '$log', '$q', '$parse', 'taSanitize',
   function($compile, $timeout, taOptions, taSelection, taExecCommand,
-    textAngularManager, $window, $document, $animate, $log, $q, $parse){
+    textAngularManager, $window, $document, $animate, $log, $q, $parse, taSanitize){
     return {
       require: '?ngModel',
       scope: {
         parentObject: '=?',
       },
       restrict: "EA",
-      link: function(scope, element, attrs, ngModel, taSanitize){
+      link: function(scope, element, attrs, ngModel){
         // all these vars should not be accessable outside this directive
         var _keydown, _keyup, _keypress, _mouseup, _focusin, _focusout,
           _originalContents, _toolbars,
