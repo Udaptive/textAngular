@@ -2145,7 +2145,7 @@ textAngular.directive("textAngular", [
           scope.displayElements.text.attr('ta-paste', '_pasteHandler($html)');
         } else {
           scope._pasteHandler = function(_html){
-            return modifyHtml(_html);
+            return scope.modifyHtml(_html);
           };
           scope.displayElements.text.attr('ta-paste', '_pasteHandler($html)');
         }
