@@ -2135,7 +2135,7 @@ textAngular.directive("textAngular", [
         }
 
         scope.modifyHtml = function (html) {
-          return taSanitize($html, '');
+          return taSanitize(html, '');
         };
 
         if(attrs.taPaste){
