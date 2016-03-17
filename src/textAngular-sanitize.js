@@ -208,7 +208,7 @@ var svgElements = makeMap("animate,animateColor,animateMotion,animateTransform,c
 // Special Elements (can contain anything)
 var specialElements = makeMap("script,style");
 
-var unsanitizedElements = makeMap("table,aq-input-ref,alternatives,annotation,equation,aq-parameterized-picker,aq-input-ref,aq-inline-activity,term");
+var unsanitizedElements = makeMap("table,aq-input-ref,alternatives,annotation,equation,aq-parameterized-picker,aq-input-ref,aq-inline-activity,term,cite");
 
 var validElements = angular.extend({},
                                    voidElements,
